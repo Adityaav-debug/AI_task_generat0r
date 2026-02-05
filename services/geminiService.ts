@@ -1,37 +1,33 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Task } from "../types";
 
-// Get API Key from Vite environment
+// Read API key from Vite env
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-// Debug (check in browser console)
-console.log("ENV KEY:", import.meta.env.VITE_GEMINI_API_KEY);
+// Debug (check in console)
+console.log("ENV KEY:", API_KEY);
 
-// If key is missing, don't crash app
+// Do NOT crash app
 if (!API_KEY) {
-  console.error("❌ Missing Gemini API Key in production");
+  console.error("❌ Missing Gemini API Key");
 }
 
-// Initialize AI only if key exists
 const ai = API_KEY
-  ? new GoogleGenAI({
-      apiKey: API_KEY,
-    })
+  ? new GoogleGenAI({ apiKey: API_KEY })
   : null;
 
-// Main function
 export const generateTasksFromGoal = async (
   goal: string
 ): Promise<Task[]> => {
   // Safety check
   if (!ai) {
-    console.error("❌ Gemini not initialized (missing API key)");
+    console.error("❌ Gemini not initialized (no API key)");
     return [];
   }
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-1.5-flash",
       contents: `
 You are a learning coach.
 
@@ -72,8 +68,8 @@ Return JSON only.
       ...t,
       id: `gen-${Date.now()}-${i}`,
     }));
-  } catch (error) {
-    console.error("❌ Gemini API Error:", error);
+  } catch (err) {
+    console.error("❌ Gemini Error:", err);
     return [];
   }
 };
