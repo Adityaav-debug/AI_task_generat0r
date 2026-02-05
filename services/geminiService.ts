@@ -1,13 +1,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Task } from "../types";
 
-// Read API key from Vite env
+// Load env key (Vite)
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-// Debug (check in console)
+// Debug
 console.log("ENV KEY:", API_KEY);
 
-// Do NOT crash app
+// Don't crash app
 if (!API_KEY) {
   console.error("❌ Missing Gemini API Key");
 }
@@ -19,15 +19,16 @@ const ai = API_KEY
 export const generateTasksFromGoal = async (
   goal: string
 ): Promise<Task[]> => {
-  // Safety check
+
   if (!ai) {
-    console.error("❌ Gemini not initialized (no API key)");
+    console.error("❌ Gemini not initialized");
     return [];
   }
 
   try {
     const response = await ai.models.generateContent({
       model: "gemini-1.5-flash",
+
       contents: `
 You are a learning coach.
 
@@ -38,25 +39,37 @@ Start from beginner to advanced.
 Each task must be practical.
 Return JSON only.
 `,
+
       config: {
         responseMimeType: "application/json",
+
         responseSchema: {
           type: Type.OBJECT,
+
           properties: {
             tasks: {
               type: Type.ARRAY,
+
               items: {
                 type: Type.OBJECT,
+
                 properties: {
                   title: { type: Type.STRING },
                   description: { type: Type.STRING },
                   status: { type: Type.STRING },
                   dueDate: { type: Type.STRING },
                 },
-                required: ["title", "description", "status", "dueDate"],
+
+                required: [
+                  "title",
+                  "description",
+                  "status",
+                  "dueDate",
+                ],
               },
             },
           },
+
           required: ["tasks"],
         },
       },
@@ -68,6 +81,7 @@ Return JSON only.
       ...t,
       id: `gen-${Date.now()}-${i}`,
     }));
+
   } catch (err) {
     console.error("❌ Gemini Error:", err);
     return [];
