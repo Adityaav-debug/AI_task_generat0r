@@ -3,7 +3,7 @@ import { Task } from "../types";
 
 // API key is auto-injected by AI Studio
 const ai = new GoogleGenAI({
-  apiKey: process.env.API_KEY
+  apiKey: import.meta.env.VITE_GEMINI_API_KEY
 });
 
 export const generateTasksFromGoal = async (goal: string): Promise<Task[]> => {
