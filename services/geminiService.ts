@@ -1,17 +1,18 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Task } from "../types";
 
-// Get API key from Vite environment
+// Get API Key from Vite environment
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-// Debug: check if key is coming in production
+// Debug (check in browser console)
 console.log("ENV KEY:", import.meta.env.VITE_GEMINI_API_KEY);
 
-// Do NOT crash the app if key is missing
+// If key is missing, don't crash app
 if (!API_KEY) {
   console.error("❌ Missing Gemini API Key in production");
 }
 
+// Initialize AI only if key exists
 const ai = API_KEY
   ? new GoogleGenAI({
       apiKey: API_KEY,
@@ -24,7 +25,7 @@ export const generateTasksFromGoal = async (
 ): Promise<Task[]> => {
   // Safety check
   if (!ai) {
-    console.error("❌ Gemini AI not initialized (missing API key)");
+    console.error("❌ Gemini not initialized (missing API key)");
     return [];
   }
 
