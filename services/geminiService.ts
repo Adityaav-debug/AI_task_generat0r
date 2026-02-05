@@ -3,6 +3,7 @@ import { Task } from "../types";
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
+// ❗ Do NOT crash the app
 if (!API_KEY) {
   console.error("Missing Gemini API Key");
 }
@@ -11,12 +12,7 @@ const ai = new GoogleGenAI({
   apiKey: API_KEY || ""
 });
 
-export const generateTasksFromGoal = async (
-  goal: string
-): Promise<Task[]> => {
-
-  if (!API_KEY) return [];
-
+export const generateTasksFromGoal = async (goal: string): Promise<Task[]> => {
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `
